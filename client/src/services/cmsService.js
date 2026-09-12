@@ -1,0 +1,25 @@
+import API from './api';
+
+export const cmsService = {
+  getSettings: () => API.get('/cms/settings'),
+  updateSettings: (data) => API.put('/cms/settings', data),
+  getHomepage: () => API.get('/cms/homepage'),
+  updateHomepage: (data) => API.put('/cms/homepage', data),
+  getPages: () => API.get('/cms/pages'),
+  getPageBySlug: (slug) => API.get(`/cms/pages/${slug}`),
+  createPage: (data) => API.post('/cms/pages', data),
+  updatePage: (id, data) => API.put(`/cms/pages/${id}`, data),
+  deletePage: (id) => API.delete(`/cms/pages/${id}`),
+  getMedia: (params) => API.get('/cms/media', { params }),
+  uploadMedia: (formData) => API.post('/cms/media', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  deleteMedia: (id) => API.delete(`/cms/media/${id}`),
+  getBlogs: () => API.get('/cms/blogs'),
+  getBlogBySlug: (slug) => API.get(`/cms/blogs/${slug}`),
+  createBlog: (data) => API.post('/cms/blogs', data),
+  updateBlog: (id, data) => API.put(`/cms/blogs/${id}`, data),
+  deleteBlog: (id) => API.delete(`/cms/blogs/${id}`),
+  getSEO: () => API.get('/cms/seo'),
+  updateSEO: (data) => API.put('/cms/seo', data),
+  getTheme: () => API.get('/cms/theme'),
+  updateTheme: (data) => API.put('/cms/theme', data),
+};

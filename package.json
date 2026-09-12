@@ -1,0 +1,22 @@
+{
+  "name": "freelancehub",
+  "version": "1.0.0",
+  "description": "Root workspace runner for FreelanceHub MERN marketplace",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "server/server.js",
+  "scripts": {
+    "install-client": "npm install --prefix client",
+    "install-server": "npm install --prefix server",
+    "install-all": "npm install && npm run install-client && npm run install-server",
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "devDependencies": {}
+}
