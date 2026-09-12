@@ -36,14 +36,27 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 const server = http.createServer(app);
 
+// Origin validator helper for CORS and Socket.io
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+  // Allow localhost / 127.0.0.1 on any port
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return true;
+  // Allow any Vercel deployment URL
+  if (origin.endsWith('.vercel.app')) return true;
+  // Allow configured CLIENT_URL
+  if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) return true;
+  // Allow all origins in non-production
+  if (process.env.NODE_ENV !== 'production') return true;
+  return false;
+};
+
 // Socket.io setup
 const io = socketIO(server, {
   cors: {
-    origin: [
-      process.env.CLIENT_URL || 'http://localhost:5173',
-      'http://localhost:5173',
-      'http://localhost:3000',
-    ],
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) return callback(null, true);
+      return callback(null, false);
+    },
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -68,23 +81,17 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // CORS
-const allowedOrigins = [
-  process.env.CLIENT_URL || 'http://localhost:5173',
-  'http://localhost:5173',
-  'http://localhost:3000',
-];
-
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. curl, Render health checks)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error(`CORS: origin '${origin}' not allowed`));
+      if (isAllowedOrigin(origin)) {
+        return callback(null, true);
+      }
+      return callback(null, false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   })
 );
 
