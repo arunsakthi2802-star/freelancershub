@@ -96,6 +96,47 @@ const seedDatabase = async (dbInstance) => {
       console.log('👑 Admin user initialized (admin@freelancehub.com / admin123)'.green);
     }
 
+    const existingClient = await usersCol.findOne({ email: 'client@freelancehub.com' });
+    if (!existingClient) {
+      const passwordHash = await bcrypt.hash('password123', 12);
+      await usersCol.insertOne({
+        id: '11111111-1111-1111-1111-111111111111',
+        full_name: 'Acme Corp (Client)',
+        email: 'client@freelancehub.com',
+        password_hash: passwordHash,
+        role: 'client',
+        company_name: 'Acme Corporation',
+        company_website: 'https://acme.example.com',
+        is_email_verified: true,
+        is_active: true,
+        is_banned: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+      console.log('🏢 Demo Client initialized (client@freelancehub.com / password123)'.green);
+    }
+
+    const existingFreelancer = await usersCol.findOne({ email: 'freelancer@freelancehub.com' });
+    if (!existingFreelancer) {
+      const passwordHash = await bcrypt.hash('password123', 12);
+      await usersCol.insertOne({
+        id: '22222222-2222-2222-2222-222222222222',
+        full_name: 'Alex Rivera (Freelancer)',
+        email: 'freelancer@freelancehub.com',
+        password_hash: passwordHash,
+        role: 'freelancer',
+        title: 'Senior Full Stack Developer',
+        hourly_rate: 65,
+        skills: ['React', 'Node.js', 'MongoDB', 'TypeScript'],
+        is_email_verified: true,
+        is_active: true,
+        is_banned: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+      console.log('💻 Demo Freelancer initialized (freelancer@freelancehub.com / password123)'.green);
+    }
+
     // 2. Seed Categories
     const categoriesCol = db.collection('categories');
     const categoryCount = await categoriesCol.countDocuments();
